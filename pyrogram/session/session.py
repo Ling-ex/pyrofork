@@ -100,11 +100,15 @@ class Session:
         self.recv_task = None
 
         self.is_started = asyncio.Event()
+        self.is_restarting = asyncio.Event()
 
         self.loop = asyncio.get_event_loop()
 
     async def start(self):
         while True:
+            if self.is_restarting.is_set():
+                await self.is_restarting.wait()
+
             self.connection = self.client.connection_factory(
                 dc_id=self.dc_id,
                 test_mode=self.test_mode,
@@ -161,6 +165,9 @@ class Session:
         log.info("Session started")
 
     async def stop(self):
+        if not self.is_started.is_set():
+            return
+
         self.is_started.clear()
 
         self.stored_msg_ids.clear()
@@ -183,9 +190,16 @@ class Session:
             except Exception as e:
                 log.exception(e)
 
+        self.is_restarting.clear()
+
         log.info("Session stopped")
 
     async def restart(self):
+        if self.is_restarting.is_set():
+            return
+
+        self.is_restarting.set()
+
         await self.stop()
         await self.start()
 
