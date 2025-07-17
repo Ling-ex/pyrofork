@@ -165,6 +165,7 @@ def pyrogram_api():
         """,
         messages="""
         Messages
+            add_task_to_todo
             send_message
             forward_media_group
             forward_messages
@@ -174,6 +175,7 @@ def pyrogram_api():
             send_audio
             send_document
             send_sticker
+            send_todo
             send_video
             send_animation
             send_voice
@@ -185,6 +187,7 @@ def pyrogram_api():
             send_contact
             send_cached_media
             send_reaction
+            set_todo_tasks_completion
             edit_message_text
             edit_message_caption
             edit_message_media
@@ -282,6 +285,7 @@ def pyrogram_api():
             hide_general_topic
             reopen_forum_topic
             reopen_general_topic
+            transfer_chat_ownership
             unhide_general_topic
             update_color
             update_folder
@@ -535,6 +539,11 @@ def pyrogram_api():
             MessageOrigin
             Photo
             Thumbnail
+            TodoList
+            TodoTask
+            TodoTasksAdded
+            TodoTasksCompleted
+            TodoTasksIncompleted
             Audio
             AvailableEffect
             Document
@@ -734,6 +743,7 @@ def pyrogram_api():
             InputVenueMessageContent
             InputContactMessageContent
             InputInvoiceMessageContent
+            InputTodoTask
         """,
         authorization="""
         Authorization
