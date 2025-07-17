@@ -17,6 +17,7 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
 
+
 import logging
 from datetime import datetime
 from functools import partial
@@ -24,7 +25,7 @@ from typing import List, Match, Union, BinaryIO, Optional, Callable, Dict
 
 import pyrogram
 from pyrogram import enums, raw, types, utils
-from pyrogram.errors import ChannelPrivate, MessageIdsEmpty, PeerIdInvalid
+from pyrogram.errors import ChannelPrivate, MessageIdsEmpty, PeerIdInvalid, FloodWait
 from pyrogram.parser import utils as parser_utils, Parser
 from ..object import Object
 from ..update import Update
@@ -1348,11 +1349,14 @@ class Message(Object, Update):
                             reply_to_message = client.message_cache[key]
 
                             if not reply_to_message:
-                                reply_to_message = await client.get_messages(
-                                    parsed_message.chat.id,
-                                    reply_to_message_ids=message.id,
-                                    replies=replies - 1
-                                )
+                                try:
+                                    reply_to_message = await client.get_messages(
+                                        parsed_message.chat.id,
+                                        reply_to_message_ids=message.id,
+                                        replies=replies - 1
+                                    )
+                                except FloodWait as f:
+                                    pass
                             if reply_to_message and not reply_to_message.forum_topic_created:
                                 parsed_message.reply_to_message = reply_to_message
                         except MessageIdsEmpty:
