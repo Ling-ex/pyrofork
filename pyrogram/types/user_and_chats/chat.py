@@ -47,6 +47,9 @@ class Chat(Object):
         is_creator (``bool``, *optional*):
             True, if this chat owner is the current user. Supergroups, channels and groups only.
 
+        is_admin (``bool``, *optional*):
+            True, if this chat admin is the current user. Supergroups, channels and groups only.
+
         is_scam (``bool``, *optional*):
             True, if this chat has been flagged for scam.
 
@@ -76,7 +79,7 @@ class Chat(Object):
         is_paid_reactions_available (``bool``, *optional*):
             True, if paid reactions are available in chat.
             Returned only in :meth:`~pyrogram.Client.get_chat`.
-            
+
         is_gifts_available (``bool``, *optional*):
             True, if star gifts can be received by this chat.
 
@@ -215,7 +218,7 @@ class Chat(Object):
 
         gifts_count (``int``, *optional*):
             Number of gifts received by the user.
-            
+
         bot_verification (:obj:`~pyrogram.types.BotVerification`, *optional*):
             Information about bot verification.
     """
@@ -229,6 +232,7 @@ class Chat(Object):
         is_verified: bool = None,
         is_restricted: bool = None,
         is_creator: bool = None,
+        is_admin: bool = None,
         is_scam: bool = None,
         is_fake: bool = None,
         is_support: bool = None,
@@ -284,6 +288,7 @@ class Chat(Object):
         self.is_verified = is_verified
         self.is_restricted = is_restricted
         self.is_creator = is_creator
+        self.is_admin = is_admin
         self.is_scam = is_scam
         self.is_fake = is_fake
         self.is_support = is_support
@@ -377,6 +382,7 @@ class Chat(Object):
             type=enums.ChatType.GROUP,
             title=chat.title,
             is_creator=getattr(chat, "creator", None),
+            is_admin=bool(getattr(chat, "admin_rights", None)),
             photo=types.ChatPhoto._parse(client, getattr(chat, "photo", None), peer_id, 0),
             permissions=types.ChatPermissions._parse(getattr(chat, "default_banned_rights", None)),
             members_count=getattr(chat, "participants_count", None),
@@ -425,6 +431,7 @@ class Chat(Object):
             is_verified=getattr(channel, "verified", None),
             is_restricted=getattr(channel, "restricted", None),
             is_creator=getattr(channel, "creator", None),
+            is_admin=bool(getattr(channel, "admin_rights", None)),
             is_scam=getattr(channel, "scam", None),
             is_fake=getattr(channel, "fake", None),
             is_join_request=getattr(channel, "join_request", None),
@@ -498,7 +505,7 @@ class Chat(Object):
             parsed_chat.birthday = types.Birthday._parse(getattr(full_user, "birthday", None))
             parsed_chat.gifts_count = getattr(full_user, "stargifts_count", None)
             personal_chat_id = getattr(full_user, "personal_channel_id", None)
-            
+
             if personal_chat_id is not None:
                 personal_chat = await client.invoke(
                     raw.functions.channels.GetChannels(
@@ -616,7 +623,7 @@ class Chat(Object):
 
     def listen(self, *args, **kwargs):
         """Bound method *listen* of :obj:`~pyrogram.types.Chat`.
-        
+
         Use as a shortcut for:
 
         .. code-block:: python
@@ -645,7 +652,7 @@ class Chat(Object):
 
     def ask(self, text, *args, **kwargs):
         """Bound method *ask* of :obj:`~pyrogram.types.Chat`.
-        
+
         Use as a shortcut for:
 
         .. code-block:: python
@@ -679,7 +686,7 @@ class Chat(Object):
 
     def stop_listening(self, *args, **kwargs):
         """Bound method *stop_listening* of :obj:`~pyrogram.types.Chat`.
-        
+
         Use as a shortcut for:
 
         .. code-block:: python
