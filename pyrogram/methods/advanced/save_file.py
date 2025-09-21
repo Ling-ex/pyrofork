@@ -107,6 +107,8 @@ class SaveFile:
 
                     try:
                         await session.invoke(data)
+                    except (pyrogram.errors.FloodWait, pyrogram.errors.FloodPremiumWait) as e:
+                        log.warning(e)
                     except Exception as e:
                         log.exception(e)
 
